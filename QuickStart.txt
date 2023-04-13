@@ -1,0 +1,31 @@
+Quick Guide
+
+This is a quick guide for the lipreading code.  This code will take a video and extract gabor features, which can be used to give a simple indication of mouth movement.  
+
+You can run this on Windows or Linux, but on Windows, you will need something like VSCode and/or Anaconda.
+
+1. You will need to install the packages listed in the package.txt file.  To make sure it works properly, I suggest installing the versions given in the file, so:
+
+pip install numpy==1.21.6
+
+This is still a work in progress, so for example, on my latest install, I just needed the pacakges installed after line 45, however you may need more.
+
+2.  Once you have done that, the main.py file contains a list of folders.  You will need to adapt them to where you store your videos.
+
+3.  After you run this code, it will process the video to create images, then individual mouth images, then it will run Gabor feature extraction, to generate filtered mouth images.  Finally, it will generate a csv file for each frame, which contains features which we've been using for speech recognition:
+
+Box_width	33
+Box_height	6
+Final_area	143
+Centroid_x	30.5104895104895
+Centroid_y	13.3356643356643
+intensity	30693
+orientation	-1.50385640580977
+
+4.  As the system is fully automated, the time consuming aspect is optimising the parameters for each frame.  One way to do it is to only optimise for the first frame, which makes the system faster.  In the "wordvideo.py" file, on line 62, uncomment the if statement, and then indent the line below:
+
+ HGamma, HKernelSize, HSig, HWavelength = TPE.TPE(picturepath, mouth_centroid_x,
+
+ THis will speed up the process.  I've also provided a selection of videos to play with.
+ 
+
