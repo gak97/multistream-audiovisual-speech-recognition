@@ -189,9 +189,4 @@ def Features(mouth_centroid_x, mouth_centroid_y,b,shotname,Gabor_path,SheetPath,
      with open(sheetPath, 'w',newline='') as f:
          writer = csv.writer(f)
          for i in range(0, len(parameters)):
-
-            writer.writerow(parameters[i],value[i])
-
-
-
-
+            writer.writerow([parameters[i],value[i]])

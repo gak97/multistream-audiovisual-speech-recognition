@@ -8,6 +8,16 @@ import os
 import glob
 import Features
 
+#     The input parameters are: 
+#     HGamma: gamma value of Gabor filter
+#     HKernelSize: Kernel size of Gabor filter
+#     HSig: Sigma value of Gabor filter
+#     HWavelength: Wavelength value of Gabor filter
+#     i: the number of picture
+#     ROIpath: the path of the picture
+#     shotname: the name of the picture
+#     GaborPath: the path to store Gabor features
+
 def Gabor_h(HGamma, HKernelSize, HSig, HWavelength,i,ROIpath,shotname,GaborPath):
 
     #cur_dir2 = 'D:/codepython3/Gabor/' # path to store Gabor features
@@ -30,6 +40,13 @@ def Gabor_h(HGamma, HKernelSize, HSig, HWavelength,i,ROIpath,shotname,GaborPath)
     kernel_sizeH = HKernelSize
     sigH = HSig
     gmH = HGamma
+
+    # 1. orientationH: orientation of the normal to the parallel stripes of a Gabor function.
+    # 2. kernel_sizeH: size of the Gabor filter
+    # 3. sigH: standard deviation of the Gaussian function used to modulate the Gabor function.
+    # 4. wavelengthH: wavelength of the sinusoidal factor in the above equation.
+    # 5. gmH: spatial aspect ratio.
+    # 6. ps: phase offset.
 
     ps = 0.0
     thH = orientationH * np.pi / 180
