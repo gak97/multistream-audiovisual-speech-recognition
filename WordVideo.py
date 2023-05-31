@@ -61,12 +61,16 @@ def Frame(detector, predictor,VideoPath,Frame,MouthPath,GaborPath,SheetPath,Feat
                 if ret == True:
                     path = Path + '/'
                     picturepath = path + str('%02d' % i) + '.jpg'
-                    print(picturepath)
-                    # print picturepath
+                    # print(picturepath)
                     cv2.imwrite(picturepath, frame)
 
-                    ROIpath, mouth_centroid_x, mouth_centroid_y, ROI_mouth, widthG, heightG = ROI.rect1(
-                                        detector, predictor, i, folder_name, picturepath, MouthPath,GaborPath,SheetPath,FeaturesPath)
+                    try:
+                        ROIpath, mouth_centroid_x, mouth_centroid_y, ROI_mouth, widthG, heightG = ROI.rect1(
+                                        detector, predictor, i, folder_name, picturepath, MouthPath, GaborPath, SheetPath, FeaturesPath)
+                    except Exception as e:
+                        traceback.print_exc()
+                        continue
+                    
                     global HGamma, HKernelSize, HSig, HWavelength
                     while True:
                         try:

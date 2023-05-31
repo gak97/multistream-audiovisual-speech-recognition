@@ -116,7 +116,7 @@ def Features(mouth_centroid_x, mouth_centroid_y,b,shotname,Gabor_path,SheetPath,
      #cv2.imwrite(Features_path,image_label_overlay)
 
      plt.savefig(Features_path)
-     plt.close()
+     plt.close('all')
      # write the weight, height, area ,mass to txt
      width = min_maxc - min_minc
      height = min_maxr - min_minr
