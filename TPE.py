@@ -77,7 +77,7 @@ def HGabor(input):
         Gabor_Path = 'TPEH.jpg'
         cv2.imwrite(Gabor_Path, np.power(destH, 2))
 
-
+        # print("1 happening")
         # fig, ax = plt.subplots(figsize=(10, 6))
         image = cv2.imread(Gabor_Path, 0)
         # image=GaborP
@@ -89,9 +89,9 @@ def HGabor(input):
         bgc = backgroundColor(image, mouth_centroid_y, mouth_centroid_x)
         # print("bgc", bgc)
         labels, num = measure.label(bwimg, return_num=True, background=1)  # Labeled connected region
-        image_label_overlay = label2rgb(labels, image=image)
+        image_label_overlay = label2rgb(labels, image=image, bg_label=0)  # Labeled connected region with different color
 
-
+        # print("2 happening")
         if num==1:
                 # print("num:",num)
                 # show picture2
@@ -102,7 +102,7 @@ def HGabor(input):
 
                 minw = 1000
                 minh = 1000
-                for region in measure.regionprops(labels, intensity_image=image, coordinates='rc'):
+                for region in measure.regionprops(labels, intensity_image=image): # coordinates='rc'
                         # print(region)
                         minr, minc, maxr, maxc = region.bbox
 
@@ -132,12 +132,13 @@ def HGabor(input):
                 height = min_maxr-min_minr
                 err = abs(widthG - width) + abs(heightG - height)
                 f = err
-
+                # print("3 happening")
                 return {'loss': f, 'status': STATUS_OK}
         else:
                 f=1000
                 return {'loss': f, 'status': STATUS_OK}
     except Exception as e:
+        # traceback.print_exc()
         f = 1000
         #print('error', e)
 
@@ -184,7 +185,7 @@ def TPE(picturepathF,mouth_centroid_xF, mouth_centroid_yF,ROI_mouthF,widthGF,hei
                         max_evals=150,
                         trials=trials
                     )
-
+            # print(Hbest)
 
             trial_loss = np.asarray(trials.losses(), dtype=float)
             best_loss = min(trial_loss)
