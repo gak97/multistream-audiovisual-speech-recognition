@@ -5,24 +5,26 @@ import numpy as np
 
 # Define the path to the folders
 path = "A:/MSc/Dissertation (CS958)/multistream-audiovisual-speech-recognition/29May2023/Sheet"
-
-# Define the max frame length of a word
-max_frame_length = 20
+label_path = "A:/MSc/Dissertation (CS958)/lrs2_v1/mvlrs_v1/main"
 
 # Define the length of lip features
 lip_feature_length = 7
 
-# Define the length of characters in label name
-label_name_length = 24
-
 # Initialize empty lists to store the data and labels
 data = []
 labels = []
+info_dict = {}
+
+# Initialize an empty list to store the tuples of directory name and word features
+dir_word_features = []
 
 # Loop through all the folders in the path
 for folder in os.listdir(path):
     # Get the full path of the folder
     folder_path = os.path.join(path, folder)
+
+    # Create an empty array to store the word features with shape (number of frames, lip_feature_length)
+    word_features = np.empty((0, lip_feature_length))
 
     # Loop through all the csv files in the folder
     for file in os.listdir(folder_path):
@@ -31,44 +33,65 @@ for folder in os.listdir(path):
         # Open the file as a csv reader
         with open(file_path, 'r') as f:
             reader = csv.reader(f)
-            # Skip the header row
-            next(reader)
-            # Create an empty array to store the word features with shape (max_frame_length, lip_feature_length)
-            word_features = np.zeros((max_frame_length, lip_feature_length))
-            # Initialize a variable to store the current frame index
-            frame_index = 0
             # Loop through each row in the file
             for row in reader:
-                # Get the frame features from the row
-                frame_features = [float(x) for x in row[1:8]]
-                # If the frame index is less than the max frame length
-                if frame_index < max_frame_length:
-                    # Fill the word features array with the frame features at the current index
-                    word_features[frame_index] = frame_features
-                    # Increment the frame index by 1
-                    frame_index += 1
+                # print(row)
+                # Check if the row has two elements
+                if len(row) == 2:
+                    # Get the key and value from the row
+                    key = row[0]
+                    value = float(row[1])
+                    # Store the key and value in the info dictionary
+                    info_dict[key] = value
                 else:
-                    # If the frame index is equal or greater than the max frame length, skip this row or handle it differently
+                    # If the row does not have two elements, skip it or handle it differently
                     pass
-            # Append the word features to the data list
-            data.append(word_features)
-            # Create an empty array to store the label name with shape (label_name_length,) and itemsize 1 (one byte per character)
-            label_name = np.chararray((label_name_length,), itemsize=1)
-            # Initialize a variable to store the current label index
-            label_index = 0
-            # Loop through each character in the folder name
-            for char in folder:
-                # Check if the character is a digit
-                if char.isdigit():
-                    # Fill the label name array with the character at the current index
-                    label_name[label_index] = char
-                    # Increment the label index by 1
-                    label_index += 1
-                else:
-                    # If the character is not a digit, skip it or handle it differently
-                    pass
-            # Append the label name to the labels list
-            labels.append(label_name.decode())
+
+            # Get the frame features from the info dictionary using the keys that match your requirement
+            width = info_dict['Box_width']
+            height = info_dict['Box_height']
+            area = info_dict['Final_area']
+            x_value = info_dict['Centroid_x']
+            y_value = info_dict['Centroid_y']
+            intensity = info_dict['intensity']
+            orientation = info_dict['orientation']
+        
+            # Create a list of frame features
+            frame_features = [width, height, area, x_value, y_value, intensity, orientation]
+
+            # Append a tuple of folder name and word features to the dir_word_features list as a nested list instead of a numpy array to match your requirement
+            dir_word_features.append((folder, frame_features))
+
+            # Append the frame features to the word features array
+            word_features = np.append(word_features, [frame_features], axis=0)
+
+    # Append a tuple of folder name and word features to the data list 
+    data.append((folder, word_features))
+
+    # Get the label name from the folder name by splitting it on underscore and store them under folder_name and video_name lists
+    folder_name = folder.split('_')
+    # Get label from the dataset by using the video name and folder name with the label_path
+    text_file = label_path + '/' + folder_name[0] + '/' + folder_name[1] + '.txt'
+    with open(text_file, 'r') as t:
+        transcript = t.read()
+        # Get the label name from the transcript by splitting it on newline and store them under label_name list
+        label_name = transcript.split('\n')[0]
+    # Append the label name to the labels list
+    labels.append(label_name)
+    # Remove duplicates from the labels list
+    labels = list(dict.fromkeys(labels))
+
+# Find the maximum number of frames among all words in data list 
+max_frame_length = np.max([arr.shape[0] for _, arr in data])
+
+# Loop through each tuple in data list 
+for i in range(len(data)):
+    # Get the directory name and word features from each tuple 
+    dir_name, word_features = data[i]
+    # Pad each word with zero value arrays to have the same number of frames as max_frame_length
+    word_features = np.pad(word_features, ((0,max_frame_length - word_features.shape[0]), (0,0)), mode='constant')
+    # Replace each tuple in data list with the padded word features array 
+    data[i] = word_features
 
 # Convert the data and labels lists into numpy arrays
 data = np.array(data)
