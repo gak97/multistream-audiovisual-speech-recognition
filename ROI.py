@@ -11,6 +11,11 @@ def rect1(detector,predictor,i,shotname,picturepath,MouthPath,GaborPath,SheetPat
  img = cv2.imread(picturepath)
  dets = detector(img, 1)
 
+ # If no faces are detected, return a default value or handle the situation in some other way
+ if not dets:
+    print(f"No faces detected in image {picturepath}")
+    return None, None, None, None, None, None
+
  # create a file PATH to store mouth picture
 
  if not os.path.exists(MouthPath):
@@ -50,6 +55,3 @@ def rect1(detector,predictor,i,shotname,picturepath,MouthPath,GaborPath,SheetPat
 
      cv2.imwrite(ROIpath, ROI_mouth)
      return ROIpath,mouth_centroid_x, mouth_centroid_y, ROI_mouth, widthG, heightG
-
-
-

@@ -66,7 +66,8 @@ for folder in os.listdir(path):
             word_features = np.append(word_features, [frame_features], axis=0)
 
     # Append a tuple of folder name and word features to the data list 
-    data.append((folder, word_features))
+    # data.append((folder, word_features))
+    data.append(word_features)
 
     # Get the label name from the folder name by splitting it on underscore and store them under folder_name and video_name lists
     folder_name = folder.split('_')
@@ -81,24 +82,26 @@ for folder in os.listdir(path):
     # Remove duplicates from the labels list
     labels = list(dict.fromkeys(labels))
 
-# Find the maximum number of frames among all words in data list 
-max_frame_length = np.max([arr.shape[0] for _, arr in data])
+# # Find the maximum number of frames among all words in data list 
+# max_frame_length = np.max([arr.shape[0] for _, arr in data])
 
-# Loop through each tuple in data list 
-for i in range(len(data)):
-    # Get the directory name and word features from each tuple 
-    dir_name, word_features = data[i]
-    # Pad each word with zero value arrays to have the same number of frames as max_frame_length
-    word_features = np.pad(word_features, ((0,max_frame_length - word_features.shape[0]), (0,0)), mode='constant')
-    # Replace each tuple in data list with the padded word features array 
-    data[i] = word_features
+# # Loop through each tuple in data list 
+# for i in range(len(data)):
+#     # Get the directory name and word features from each tuple 
+#     dir_name, word_features = data[i]
+#     # Pad each word with zero value arrays to have the same number of frames as max_frame_length
+#     # word_features = np.pad(word_features, ((0,max_frame_length - word_features.shape[0]), (0,0)), mode='constant')
+#     # Replace each tuple in data list with the padded word features array 
+#     data[i] = word_features
+
+
 
 # Convert the data and labels lists into numpy arrays
 data = np.array(data)
 labels = np.array(labels)
 
 # Save the data and labels arrays into .npy files
-np.save('A:/MSc/Dissertation (CS958)/multistream-audiovisual-speech-recognition/data.npy', data)
+np.save('A:/MSc/Dissertation (CS958)/multistream-audiovisual-speech-recognition/data_without_padding.npy', data)
 np.save('A:/MSc/Dissertation (CS958)/multistream-audiovisual-speech-recognition/label.npy', labels)
 
 # Print a message to indicate success

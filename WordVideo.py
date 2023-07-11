@@ -33,8 +33,19 @@ def Frame(detector, predictor,VideoPath,FramePath,MouthPath,GaborPath,SheetPath,
     speaker_generator = generate_speakers()
     video_generator = generate_videos(glob.glob(VideoPath, recursive=True))
 
+    # Load the list of processed videos
+    if os.path.exists('processed_videos.txt'):
+        with open('processed_videos.txt', 'r') as f:
+            processed_videos = f.read().splitlines()
+    else:
+        processed_videos = []
+
     for m in speaker_generator:
         for v in video_generator:
+            # Skip the video if it has been processed
+            if v in processed_videos:
+                continue
+
             (filepath, tempfilename) = os.path.split(v)
             maindir, videodir = os.path.split(filepath)
             (video_shotname, extension) = os.path.splitext(tempfilename)
@@ -53,12 +64,15 @@ def Frame(detector, predictor,VideoPath,FramePath,MouthPath,GaborPath,SheetPath,
                     i = i + 1
                     path = Path + '/'
                     picturepath = path + str('%02d' % i) + '.jpg'
-                    print(picturepath)
+                    # print(picturepath)
                     cv2.imwrite(picturepath, frames)
                         
                     try:
                         ROIpath, mouth_centroid_x, mouth_centroid_y, ROI_mouth, widthG, heightG = ROI.rect1(
                                         detector, predictor, i, folder_name, picturepath, MouthPath, GaborPath, SheetPath, FeaturesPath)
+                        if ROIpath is None:
+                            print(f"Skipping frame {i} due to no faces detected")
+                            continue
                     except Exception as e:
                         traceback.print_exc()
                         continue
@@ -84,3 +98,7 @@ def Frame(detector, predictor,VideoPath,FramePath,MouthPath,GaborPath,SheetPath,
                         break
                 else:
                     break
+
+            # After successful processing, add the video to the list of processed videos
+            with open('processed_videos.txt', 'a') as f:
+                f.write(v + '\n')
