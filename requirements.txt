@@ -41,7 +41,7 @@ sox==1.4.1
 tifffile==2023.4.12
 tqdm==4.65.0
 tzdata==2023.3
-urllib3==1.26.17
+urllib3==1.26.18
 websockets==11.0.2
 wget==3.2
 wincertstore==0.2
