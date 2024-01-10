@@ -9,7 +9,7 @@ cycler==0.11.0
 decorator==4.4.2
 dlib==19.21.0
 ffmpeg-python==0.2.0
-fonttools==4.39.3
+fonttools==4.43.0
 future==0.18.3
 hyperopt==0.2.7
 idna==3.4
