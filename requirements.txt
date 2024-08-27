@@ -46,5 +46,5 @@ websockets==11.0.2
 wget==3.2
 wincertstore==0.2
 xmltodict==0.13.0
-yt-dlp==2024.7.1
+yt-dlp==2024.7.7
 zipp==3.19.1
